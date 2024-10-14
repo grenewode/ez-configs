@@ -23,10 +23,11 @@
     };
   };
 
-  outputs = inputs@{ flake-parts, ez-configs, ... }:
+  outputs = inputs@{ self, flake-parts, ez-configs, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
         ez-configs.flakeModule
+	self.flakeModules.hello-world
       ];
 
       systems = [ ];

@@ -74,8 +74,8 @@ let
         modules = [
           configModule
           { networking.hostName = lib.mkDefault "${name}"; }
-          ] ++ optionals importDefault [ (ezModules.default or { }) ]
-          ++ optionals (userHomeModules != [ ]) [
+        ] ++ optionals importDefault [ (ezModules.default or { }) ]
+        ++ optionals (userHomeModules != [ ]) [
           hmModule
           { home-manager.extraSpecialArgs = extraSpecialArgs // { ezModules = ezHomeModules; }; }
           ({ pkgs, ... }: {
@@ -279,15 +279,18 @@ let
   };
 
 
+  modulesDirectory = configType: mkOption {
+    default = if cfg.root != null then "${cfg.root}/${configType}-modules" else ./unset-directory;
+    defaultText = literalExpression "\"\${ezConfigs.root}/${configType}-modules\"";
+    type = types.path;
+    description = ''
+      The directory containing ${configType}Modules.
+    '';
+  };
+
+
   configurationOptions = configType: {
-    modulesDirectory = mkOption {
-      default = if cfg.root != null then "${cfg.root}/${configType}-modules" else ./unset-directory;
-      defaultText = literalExpression "\"\${ezConfigs.root}/${configType}-modules\"";
-      type = types.path;
-      description = ''
-        The directory containing ${configType}Modules.
-      '';
-    };
+    modulesDirectory = modulesDirectory configType;
 
     configurationsDirectory = mkOption {
       default = if cfg.root != null then "${cfg.root}/${configType}-configurations" else ./unset-directory;
@@ -399,12 +402,17 @@ in
     nixos = configurationOptions "nixos";
 
     darwin = configurationOptions "darwin";
+
+    flake = {
+      modulesDirectory = modulesDirectory "flake";
+    };
   };
 
   config.flake = rec {
     homeModules = readModules cfg.home.modulesDirectory;
     nixosModules = readModules cfg.nixos.modulesDirectory;
     darwinModules = readModules cfg.darwin.modulesDirectory;
+    flakeModules = readModules cfg.flake.modulesDirectory;
 
     homeConfigurations = userConfigs
       {

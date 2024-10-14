@@ -13,6 +13,7 @@ This results in 6 directories the module can use:
 - [darwinConfigurations](https://flake.parts/options/ez-configs#opt-ezConfigs.darwin.configurationsDirectory)
 - [homeModules](https://flake.parts/options/ez-configs#opt-ezConfigs.home.modulesDirectory)
 - [homeConfigurations](https://flake.parts/options/ez-configs#opt-ezConfigs.home.configurationsDirectory)
+- [flakeModules](https://flake.parts/options/ez-configs#opt-ezConfigs.flake.modulesDirectory)
 
 Each `.nix` file, or a directory containing `default.nix` file gets included in the respective outputs.
 When building configurations, the default module (ie. `<modulesDirectory>/default.nix` or `<modulesDirectory>/default/default.nix`) is imported, unless `importDefault` is set to `false` for that user or host configuration.
